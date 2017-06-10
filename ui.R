@@ -1,6 +1,6 @@
 ### Data Science Capstone : Course Project
 ### ui.R file for the Shiny app
-### Github repo : https://github.com/
+### Github repo : https://github.com/sixteenpython/Data-Science-Capstone
 
 setwd("C://Users//AnandVasumathi//Documents//")
 
@@ -10,7 +10,7 @@ shinyUI(navbarPage("Coursera Data Science Capstone: Course Project",
                    tabPanel("Predict the Next Word",
                             HTML("<strong>Author: ANAND VENKATARAMAN</strong>"),
                             br(),
-                            HTML("<strong>Date: 18 June 2017</strong>"),
+                            HTML("<strong>Date: 11 June 2017</strong>"),
                             br(),
                             img(src = './/headers.png',align = "right"),
                             # Sidebar

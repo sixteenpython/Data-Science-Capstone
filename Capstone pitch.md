@@ -1,7 +1,7 @@
 Coursera Data Science Capstone: Course Project
 ========================================================
 author: ANAND VENKATARAMAN
-date: 18 June 2017
+date: 11 June 2017
 
 ![plot of chunk headers](doc/headers.png)
 
@@ -18,7 +18,7 @@ The goal of the project is to build a predictive text model combined with a shin
 
 *[Shiny App]* - [https://]
 
-*[Github Repo]* - [https://github.com/]
+*[Github Repo]* - [https://github.com/sixteenpython/Data-Science-Capstone]
 
 </font>
 
@@ -61,4 +61,6 @@ Shiny Application
 ========================================================
 type: sub-section
 
-<span style="color:blue; font-weight:bold;font-size:0.7em">A Shiny application was developed based on the next word prediction model described previously as shown below. </span><img src="./www/app.png"></img>
+<span style="color:blue; font-weight:bold;font-size:0.7em">A Shiny application was developed based on the next word prediction model described previously as shown below.
+
+![plot of chunk app](doc/app.png)
