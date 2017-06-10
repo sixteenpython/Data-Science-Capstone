@@ -1,0 +1,196 @@
+---
+title: "Data Science Capstone - Week2 Milestone report"
+output: html_document
+author: Anand venkataraman
+date : Sunday, May 14,2017
+---
+### Introduction 
+
+The goal of this milestone report is to display that
+
+we have gotten used to working with the data, and
+we are on track to create our prediction algorithm.
+The motivation for this milestone report is to:
+
+demonstrate that we have downloaded the data and have successfully loaded it in.
+create a basic report of summary statistics about the data sets.
+report any interesting findings that we amassed so far.
+get feedback on our plans for creating a prediction algorithm and Shiny app.
+
+### Loading Libraries
+#### The following libraries are loaded before any computation is carried out.
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+library(tm)
+library(wordcloud)
+library(RWeka)
+library(ggplot2)
+```
+## Loading Data
+#### Data for the analysis in this course is provided on this website: https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip. These files are zipped, and they are provided in German, Russian, Finnish and English. For this project, we are only using the English files.
+
+#### The Twitter, Blogs, and News data files are loaded as show below.
+
+```{r}
+#Load data
+twitter <- readLines(con <- file("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.twitter.txt"), encoding = "UTF-8", skipNul = TRUE)
+blog <- readLines(con <- file("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.blogs.txt"), encoding = "UTF-8", skipNul = TRUE)
+news <- readLines(con <- file("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.news.txt"), encoding = "UTF-8", skipNul = TRUE)
+close(con)
+```
+## Summary of Data Loaded
+#### The data can be analysed in relation to their file size, number of lines, number of words, and the longest line based on number of characters.
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+#check the length
+twit.length <- length(twitter)
+blog.length <- length(blog)
+news.length <- length(news)
+
+#check the file size in megabyte
+twit.size <- file.info("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.twitter.txt")$size /1024 /1000
+blog.size <- file.info("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.blogs.txt")$size /1024 /1000
+news.size <- file.info("C://Users//AnandVasumathi//Documents//Coursera-SwiftKey//final//en_US//en_US.news.txt")$size /1024 /1000
+
+#length of the longest line seen
+tMax<-nchar(twitter[which.max(nchar(twitter))])
+bMax<-nchar(blog[which.max(nchar(blog))])
+nMax<-nchar(news[which.max(nchar(news))])
+
+#word count
+tWords <- sum(sapply(gregexpr("\\S+", twitter), length))
+bWords <- sum(sapply(gregexpr("\\S+", blog), length))
+nWords <- sum(sapply(gregexpr("\\S+", news), length))
+```
+## Prepare and Clean the Datasets
+#### We then conver the file format and remove any "NA" and/or missing values.
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+##remove all weird characters by converting UTF-8 to ASCII
+twitter<- iconv(twitter, 'UTF-8', 'ASCII', "byte")
+blog<- iconv(blog, 'UTF-8', 'ASCII', "byte")
+news<- iconv(news, 'UTF-8', 'ASCII', "byte")
+
+##remove all NA and/or missing value
+twitter <- (twitter[!is.na(twitter)])
+blog <- (blog[!is.na(blog)])
+news <- (news[!is.na(news)])
+```
+## Due to the huge volume of data, we decided to take only 1% sample from the dataset for further analysis. The datasets are then combined and convered to corpus format.
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+twitterSample<-sample(twitter, length(twitter)*0.01)
+blogSample<-sample(blog, length(blog)*0.01)
+newsSample<-sample(news, length(news)*0.01)
+sample <- c(twitterSample,blogSample,newsSample)
+doc.vec <- VectorSource(sample)
+```
+## Data in the corpus format is then cleaned with the following methods:
+
+#### 1) by converting texts into plain texts of lower case, without punctuations, numbers, and white spaces. A wordcloud has been illustrated as follows to show the 100 most frequently used words in the sample (from news, blogs and Twitter).
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+doc.corpus <- Corpus(doc.vec)
+doc.corpus<- tm_map(doc.corpus, tolower)
+doc.corpus<- tm_map(doc.corpus, removePunctuation)
+doc.corpus<- tm_map(doc.corpus, removeNumbers)
+doc.corpus <- tm_map(doc.corpus, stripWhitespace)
+```
+```{r}
+library("SnowballC")
+wordcloud(doc.corpus, max.words = 100, random.order = FALSE,rot.per=0.35, use.r.layout=FALSE,colors=brewer.pal(8, "Dark2"))
+title("Wordcloud: 100 Most Frequently Used Words")
+```
+
+#### 2) by filtering the lower-cased texts from stem words and stop words, after removal of punctuations, numbers, and white spaces. A wordcloud has been illustrated as follows to show the 100 most frequently used words in the sample (from news, blogs and Twitter)
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+doc.corpus <- Corpus(doc.vec)
+doc.corpus<- tm_map(doc.corpus, tolower)
+doc.corpus<- tm_map(doc.corpus, removePunctuation)
+doc.corpus<- tm_map(doc.corpus, removeNumbers)
+doc.corpus <- tm_map(doc.corpus, stripWhitespace)
+doc.corpus <- tm_map(doc.corpus, removeWords, stopwords("english")) 
+doc.corpus <- tm_map(doc.corpus, stemDocument)
+```
+```{r}
+wordcloud(doc.corpus, max.words = 50, random.order = FALSE,rot.per=0.35, use.r.layout=FALSE,colors=brewer.pal(8, "Dark2"))
+title("Wordcloud: 50 Most Frequently Used Words")
+```
+#### 3) by filtering the lower-cased texts from stem words and stop words, before removal of punctuations, numbers, and white spaces. A wordcloud has been illustrated as follows to show the 100 most frequently used words in the sample (from news, blogs and Twitter)
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+doc.corpus <- Corpus(doc.vec)
+doc.corpus<- tm_map(doc.corpus, tolower)
+doc.corpus <- tm_map(doc.corpus, removeWords, stopwords("english")) 
+doc.corpus <- tm_map(doc.corpus, stemDocument)
+doc.corpus<- tm_map(doc.corpus, removePunctuation)
+doc.corpus<- tm_map(doc.corpus, removeNumbers)
+doc.corpus <- tm_map(doc.corpus, stripWhitespace)
+```
+```{r}
+wordcloud(doc.corpus, max.words = 50, random.order = FALSE,rot.per=0.35, use.r.layout=FALSE,colors=brewer.pal(8, "Dark2"))
+title("Wordcloud: 50 Most Frequently Used Words")
+```
+#### Both method 2 and 3 gets similar results. Compared to the 1st method, method 2 and 3 removes all the meaningless words and produces slightly more meaningful singular words.
+
+### Analysing Word Frequency
+#### In this section, we will analyse the word frequency in the corpus via N-gram tokenisation. As shown below, we formulated the function to calculate the frequency of words.
+```{r}
+nGram <- function(ng, data, lowfreq) {
+  # Tokenizer splits a string into an n-gram (a stream of terms or tokens) with min and max grams.
+  ngramtokenizer <- function(x) NGramTokenizer(x, Weka_control(min = ng, max = ng))  
+  # construct a term-document matrix 
+  ngram_tdm <- TermDocumentMatrix(data, control = list(tokenize = ngramtokenizer))
+  # find the frequent terms in a term-doc matrix with a lower frequency bound 
+  freq <- findFreqTerms(ngram_tdm, lowfreq=lowfreq)
+  # tabulating frequency of the frequent terms in the form of data frame
+  ngram_freq <- rowSums(as.matrix(ngram_tdm[freq,]))
+  ngram_freq <- data.frame(ngramTerm=names(ngram_freq), Frequency=ngram_freq)
+  ngram_freq <- ngram_freq[order(-ngram_freq$Frequency),]
+  rownames(ngram_freq) <- c(1:nrow(ngram_freq))
+  return(ngram_freq)
+}
+```
+### Unigram Analysis
+```{r}
+ngram <- nGram(1, doc.corpus, 1000)
+
+ggplot(data=ngram, 
+       aes(x=reorder(ngramTerm, Frequency), y=Frequency)) +
+  geom_bar(stat = "identity", fill="orange") + 
+  coord_flip() + 
+  xlab("Words or Terms") + ylab("Frequency") +
+  labs(title = "Unigram - Most Frequently Used Words")
+```
+### Bigram Analysis
+```{r}
+ngram <- nGram(2, doc.corpus, 70)
+
+ggplot(data=ngram, 
+       aes(x=reorder(ngramTerm, Frequency), y=Frequency)) +
+  geom_bar(stat = "identity", fill="orange") + 
+  coord_flip() + 
+  xlab("Words or Terms") + ylab("Frequency") +
+  labs(title = "Bigram - Most Frequently Used Words")
+```
+### Trigram Analysis
+```{r}
+ngram <- nGram(3, doc.corpus, 40)
+
+ggplot(data=ngram, 
+       aes(x=reorder(ngramTerm, Frequency), y=Frequency)) +
+  geom_bar(stat = "identity", fill="orange") + 
+  coord_flip() + 
+  xlab("Words or Terms") + ylab("Frequency") +
+  labs(title = "Trigram - Most Frequently Used Words")
+```
+## Conclusion and Next Steps
+# This concludes the Week 2 Milestone Report, which has enabled us to explore and analyse data on the dataset provided.
+
+# The next steps are planned towards the direction of creating a model that allows us to predict the next word with a word and/or a set of words in a sentence. Driven towards this goal, the next steps are:
+
+# 1) To develop prediction algorithm, which as of now, will be based on the above n-gram algorithm
+
+# 2) To deploy the prediction model under the Shiny App, which will take in word(s) as input and predict the next word and/or next set of words in a sentence.
