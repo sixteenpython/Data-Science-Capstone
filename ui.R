@@ -2,7 +2,7 @@
 ### ui.R file for the Shiny app
 ### Github repo : https://github.com/sixteenpython/Data-Science-Capstone
 
-setwd("C://Users//AnandVasumathi//Documents//")
+## setwd("~/")
 
 suppressWarnings(library(shiny))
 suppressWarnings(library(markdown))
@@ -12,7 +12,7 @@ shinyUI(navbarPage("Coursera Data Science Capstone: Course Project",
                             br(),
                             HTML("<strong>Date: 11 June 2017</strong>"),
                             br(),
-                            img(src = './/headers.png',align = "right"),
+                            img(src = './headers.png',align = "right"),
                             # Sidebar
                             sidebarLayout(
                               sidebarPanel(
@@ -39,7 +39,7 @@ shinyUI(navbarPage("Coursera Data Science Capstone: Course Project",
                    ),
                    tabPanel("About",
                             mainPanel(
-                              img(src = './/headers.png',align = "right"),
+                              img(src = './headers.png',align = "right"),
                               includeMarkdown("about.md")
                             )
                    )

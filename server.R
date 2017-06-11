@@ -6,13 +6,13 @@ suppressWarnings(library(tm))
 suppressWarnings(library(stringr))
 suppressWarnings(library(shiny))
 
-setwd("C://Users//AnandVasumathi//Documents//")
+## setwd("~/")
 
 # Load Quadgram,Trigram & Bigram Data frame files
 
-quadgram <- readRDS("C://Users//AnandVasumathi//Documents//quadgram.RData");
-trigram <- readRDS("C://Users//AnandVasumathi//Documents//trigram.RData");
-bigram <- readRDS("C://Users//AnandVasumathi//Documents//bigram.RData");
+quadgram <- readRDS("./quadgram.RData");
+trigram <- readRDS("./trigram.RData");
+bigram <- readRDS("./bigram.RData");
 mesg <<- ""
 
 # Cleaning of user input before predicting the next word

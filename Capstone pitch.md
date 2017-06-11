@@ -16,7 +16,7 @@ type: sub-section
 <font size="5">
 The goal of the project is to build a predictive text model combined with a shiny app UI that will predict the next word as the user types a sentence similar to the way most smart phone keyboards are implemented today using the technology of Swiftkey.
 
-*[Shiny App]* - [https://]
+*[Shiny App]* - [https://sixteenpython.shinyapps.io/NextWordPredictor/]
 
 *[Github Repo]* - [https://github.com/sixteenpython/Data-Science-Capstone]
 
